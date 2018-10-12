@@ -2,6 +2,7 @@
 
 from enum import Enum
 from collections import namedtuple
+from math import floor
 
 Status = namedtuple('Status', 'status_effect duration')
 
@@ -46,6 +47,9 @@ class Enemy:
 
     def add_damage(self, amount):
         self.__damage += amount
+
+    def get_damage(self):
+        return self.__damage
 
     def increment_time(self, amount):
         filtered_statuses = filter(
@@ -147,17 +151,20 @@ def main():
         (aith_raynor_7, aith_enemy_7),
     ]
 
-    for attack_number in range(500):
+    for attack_number in range(1001):
         print_attack = attack_number % 50 == 0
+        excel_row = []
         if print_attack:
-            print('ATTACK NUMBER: {}'.format(attack_number))
+            excel_row.append(attack_number)
+            excel_row.append(attack_number * Raynor.ATTACK_SPEED / 60)
+            excel_row.append(floor(attack_number / 4))
         for (raynor, enemy) in pairs:
             enemy.increment_time(Raynor.ATTACK_SPEED)
             raynor.attack(enemy)
             if print_attack:
-                print(raynor)
-                print(enemy)
-                print('\n')
+                excel_row.append(enemy.get_damage())
+        if print_attack:
+            print(','.join(map(lambda v: str(v), excel_row)))
 
 
 if __name__ == '__main__':
